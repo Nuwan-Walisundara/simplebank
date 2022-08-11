@@ -18,8 +18,9 @@ jobs:
         image: postgres
         # Provide the password for postgres
         env:
-          POSTGRES_USER: postgres
+          POSTGRES_USER: postgres:12
           POSTGRES_PASSWORD: postgresroot
+          POSTGRES_DB: simple_bank
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -36,6 +37,8 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: 1.18
+      - name: Setup schema
+      
 
       - name: Test
         run: make test
