@@ -15,10 +15,10 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: postgres
+        image: postgres:12
         # Provide the password for postgres
         env:
-          POSTGRES_USER: postgres:12
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgresroot
           POSTGRES_DB: simple_bank
         # Set health checks to wait until postgres has started
