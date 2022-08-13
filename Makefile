@@ -12,5 +12,6 @@ sqlc:
 	sqlc generate	
 server:
 	go run main.go
-
-.PHONY:	migrateup migratedown test  sqlc server
+mock:
+	mockgen -package mockdb -destination db/mock/store.go  github.com/Nuwan-Walisundara/simplebank/db/sqlc Store
+.PHONY:	migrateup migratedown test  sqlc server mock
