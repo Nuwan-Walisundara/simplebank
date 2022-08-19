@@ -20,6 +20,10 @@ ORDER BY id
 LIMIT $1
 OFFSET $2;
 
+-- name: GetAccountsByIDs :many
+SELECT * FROM account
+WHERE id  = ANY($1::int[]) ;
+
 -- name: UpdateAccount :one
 UPDATE account
 set balance = $2 

@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/lib/pq"
 )
 
 const createAccount = `-- name: CreateAccount :one
@@ -97,6 +99,40 @@ type GetAccountsParams struct {
 
 func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Account, error) {
 	rows, err := q.db.QueryContext(ctx, getAccounts, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Account{}
+	for rows.Next() {
+		var i Account
+		if err := rows.Scan(
+			&i.ID,
+			&i.Owner,
+			&i.Balance,
+			&i.Currency,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAccountsByIDs = `-- name: GetAccountsByIDs :many
+SELECT id, owner, balance, currency, created_at FROM account
+WHERE id  = ANY($1::int[])
+`
+
+func (q *Queries) GetAccountsByIDs(ctx context.Context, dollar_1 []int32) ([]Account, error) {
+	rows, err := q.db.QueryContext(ctx, getAccountsByIDs, pq.Array(dollar_1))
 	if err != nil {
 		return nil, err
 	}
